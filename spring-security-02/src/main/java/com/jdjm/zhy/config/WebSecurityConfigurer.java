@@ -15,6 +15,9 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private MyAuthenticationSuccessHandler myAuthenticationSuccessHandler;
+
+    @Autowired
+    private MyAuthenticationFailureHandler myAuthenticationFailureHandler;
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
@@ -31,12 +34,13 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                  */
                 .usernameParameter("uname")
                 .passwordParameter("passwd")
-//                .successForwardUrl("/index") 		 //forward 跳转    路径变成/doLogin 页面显示的内容为  @RequestMapping("/index")返回的内容
-//                .defaultSuccessUrl("/index")   //redirect 重定向
+//                .successForwardUrl("/index") 		 //认证成功后 forward 跳转    路径变成/doLogin 页面显示的内容为  @RequestMapping("/index")返回的内容
+//                .defaultSuccessUrl("/index")   // 认证成功后 redirect 重定向
                                                     //Tip:successForwardUrl 和 defaultSuccessUrl只能二选一 不过前后端分离的情况下一般是使用下面这种↓
                 .successHandler(myAuthenticationSuccessHandler) //前后端分离的情况下，登陆成功后不是跳转到一个新的页面资源，而是返回json数据
-                .failureForwardUrl("/login.htmll") //认证失败后 forward跳转
+//                .failureForwardUrl("/login.htmll") //认证失败后 forward跳转
 //                .failureUrl("/login.htmll") //认证失败后 redirect跳转
+                .failureHandler(myAuthenticationFailureHandler)
                 .and()
                 .csrf().disable();
 
