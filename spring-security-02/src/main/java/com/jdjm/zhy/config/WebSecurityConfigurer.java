@@ -13,6 +13,8 @@ import org.springframework.security.web.util.matcher.OrRequestMatcher;
 @Configuration
 public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private MyAuthenticationSuccessHandler myAuthenticationSuccessHandler;
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
@@ -29,6 +31,9 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                  */
                 .usernameParameter("uname")
                 .passwordParameter("passwd")
+//                .successForwardUrl("/index") 		 //forward 跳转           注意:不会跳转到之前请求路径
+                //.defaultSuccessUrl("/index")   //redirect 重定向    注意:如果之前请求路径,会有优先跳转之前请求路径
+                .successHandler(myAuthenticationSuccessHandler) //前后端分离的情况下，登陆成功后不是跳转到一个新的页面资源，而是返回json数据
                 .and()
                 .csrf().disable();
 
