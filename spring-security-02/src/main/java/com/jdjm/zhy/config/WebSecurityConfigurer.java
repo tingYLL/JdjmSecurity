@@ -31,9 +31,12 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                  */
                 .usernameParameter("uname")
                 .passwordParameter("passwd")
-//                .successForwardUrl("/index") 		 //forward 跳转           注意:不会跳转到之前请求路径
-                //.defaultSuccessUrl("/index")   //redirect 重定向    注意:如果之前请求路径,会有优先跳转之前请求路径
+//                .successForwardUrl("/index") 		 //forward 跳转    路径变成/doLogin 页面显示的内容为  @RequestMapping("/index")返回的内容
+//                .defaultSuccessUrl("/index")   //redirect 重定向
+                                                    //Tip:successForwardUrl 和 defaultSuccessUrl只能二选一 不过前后端分离的情况下一般是使用下面这种↓
                 .successHandler(myAuthenticationSuccessHandler) //前后端分离的情况下，登陆成功后不是跳转到一个新的页面资源，而是返回json数据
+                .failureForwardUrl("/login.htmll") //认证失败后 forward跳转
+//                .failureUrl("/login.htmll") //认证失败后 redirect跳转
                 .and()
                 .csrf().disable();
 
