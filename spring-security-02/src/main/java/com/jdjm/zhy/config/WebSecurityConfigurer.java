@@ -21,7 +21,16 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated() //authenticated() 需要认证
                 .and()
                 .formLogin()
-                .loginPage("/login.htmll"); //用来指定默认登录页面,不指定的话，当用户访问未认证资源的时候，依旧会跳转到默认Security的默认登陆页面
+                .loginPage("/login.htmll") //用来指定默认登录页面,不指定的话，当用户访问未认证资源的时候，依旧会跳转到默认Security的默认登陆页面
+                .loginProcessingUrl("/doLogin")
+                /**
+                 * ↑ 一旦指定默认登录页面 ,就必须写这个 ;这里的参数(即"/doLogin") 和 templates下的那个前端文件里的表单发送的路径必须一样
+                 * 在后端Controller中可以没有实际的/doLogin，只需要和 templates下的那个前端文件里的表单发送的路径一样即可
+                 */
+                .usernameParameter("uname")
+                .passwordParameter("passwd")
+                .and()
+                .csrf().disable();
 
     }
 }
