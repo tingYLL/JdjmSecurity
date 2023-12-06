@@ -42,6 +42,12 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 //                .failureUrl("/login.htmll") //认证失败后 redirect跳转
                 .failureHandler(myAuthenticationFailureHandler)
                 .and()
+                .logout()//获取对象 以便调用下面的方法
+                .logoutUrl("/logout") //指定退出登录请求地址(只需要在浏览器地址栏输入这个就行)，默认是 GET 请求，路径为 `/logout`
+                .invalidateHttpSession(true) // 退出时是否是 session 失效，默认值为 true
+                .clearAuthentication(true) // 退出时是否清除认证信息，默认值为 true
+                .logoutSuccessUrl("/login.htmll") //退出登录时跳转地址
+                .and()
                 .csrf().disable();
 
     }
