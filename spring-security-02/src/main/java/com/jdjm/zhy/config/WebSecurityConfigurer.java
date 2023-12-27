@@ -23,6 +23,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .mvcMatchers("/login.htmll").permitAll()  //permitAll()表示放行
                 .mvcMatchers("/index").permitAll() //放行资源写在任何(即anyRequest)前面,不然会报错
+                .mvcMatchers("/getUser").permitAll()
                 .anyRequest().authenticated() //authenticated() 需要认证
                 .and()
                 .formLogin()
