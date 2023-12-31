@@ -10,7 +10,9 @@ import com.jdjm.zhy.service.RoleService;
 import com.jdjm.zhy.service.UserRoleService;
 import com.jdjm.zhy.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,11 +36,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public User queryUser(String userName) {
         User user = userMapper.queryUser(userName);
-        List<User> userList = this.lambdaQuery().eq(User::getUsername, userName).list();
-        List<Integer> userIdList = userList.stream().map(x -> x.getId()).collect(Collectors.toList());
-        List<UserRole> userRoleList = userRoleService.lambdaQuery().in(UserRole::getUid, userIdList).list();
-        List<Integer> roleIdList = userRoleList.stream().map(UserRole::getRid).collect(Collectors.toList());
-        List<Role> roleList = roleService.lambdaQuery().in(Role::getId, roleIdList).list();
+        if(ObjectUtils.isEmpty(user)){
+            throw new UsernameNotFoundException("用户名不正确");
+        }
+        //方式一
+//        List<User> userList = this.lambdaQuery().eq(User::getUsername, userName).list();
+//        List<Integer> userIdList = userList.stream().map(x -> x.getId()).collect(Collectors.toList());
+//        List<UserRole> userRoleList = userRoleService.lambdaQuery().in(UserRole::getUid, userIdList).list();
+//        List<Integer> roleIdList = userRoleList.stream().map(UserRole::getRid).collect(Collectors.toList());
+//        List<Role> roleList = roleService.lambdaQuery().in(Role::getId, roleIdList).list();
+//        user.setRoles(roleList);
+
+        //方式二
+        //List<Role> roleList = userMapper.queryRole(user.getId());
+
+        //方式三
+        List<Role> roleList = userMapper.queryRole2(user.getId());
         user.setRoles(roleList);
         return user;
     }

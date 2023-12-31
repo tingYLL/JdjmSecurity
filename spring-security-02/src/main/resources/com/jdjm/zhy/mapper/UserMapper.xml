@@ -8,4 +8,16 @@
         select * from user
                  where user_name = #{userName}
     </select>
+
+    <select id="queryRole" resultType="com.jdjm.zhy.entity.Role">
+        select * from role where id in (
+            select rid from user_role ur INNER JOIN user u on ur.uid = u.id where u.id = #{userId}
+            )
+    </select>
+
+    <select id="queryRole2" resultType="com.jdjm.zhy.entity.Role">
+        select * from role r INNER JOIN user_role ur on r.id = ur.rid
+        where uid = #{uid}
+    </select>
+
 </mapper>

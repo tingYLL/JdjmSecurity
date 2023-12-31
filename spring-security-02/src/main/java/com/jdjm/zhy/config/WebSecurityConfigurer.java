@@ -1,9 +1,7 @@
 package com.jdjm.zhy.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -18,12 +16,29 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private MyAuthenticationFailureHandler myAuthenticationFailureHandler;
+
+
+    @Autowired
+    private   MyUserDetailsService myUserDetailsService;
+
+//    private  final MyUserDetailsService myUserDetailsService;
+//
+//    @Autowired
+//    public WebSecurityConfigurer(MyUserDetailsService myUserDetailsService) {
+//        this.myUserDetailsService = myUserDetailsService;
+//    }
+
+    @Override
+    public void configure(AuthenticationManagerBuilder builder) throws Exception {
+        builder.userDetailsService(myUserDetailsService);
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .mvcMatchers("/login.htmll").permitAll()  //permitAll()表示放行
                 .mvcMatchers("/index").permitAll() //放行资源写在任何(即anyRequest)前面,不然会报错
-                .mvcMatchers("/getUser").permitAll()
+//                .mvcMatchers("/getUser").permitAll()
                 .anyRequest().authenticated() //authenticated() 需要认证
                 .and()
                 .formLogin()
