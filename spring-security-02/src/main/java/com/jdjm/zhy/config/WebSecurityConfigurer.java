@@ -1,10 +1,15 @@
 package com.jdjm.zhy.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.jaas.memory.InMemoryConfiguration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 
@@ -18,9 +23,19 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     private MyAuthenticationFailureHandler myAuthenticationFailureHandler;
 
 
+    //自定义数据源（基于内存）
+    @Bean
+    public UserDetailsService userDetailsService(){
+        InMemoryUserDetailsManager inMemoryUserDetailsManager = new InMemoryUserDetailsManager();
+        inMemoryUserDetailsManager.createUser(User.withUsername("root").password("{noop}123666").roles("admin").build());
+        return inMemoryUserDetailsManager;
+    }
+
+    //自定义数据源（来自数据库中的查询结果）
     @Autowired
     private   MyUserDetailsService myUserDetailsService;
 
+    //构造注入
 //    private  final MyUserDetailsService myUserDetailsService;
 //
 //    @Autowired
@@ -30,6 +45,10 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(AuthenticationManagerBuilder builder) throws Exception {
+//        自定义数据源 （基于内存）
+//        builder.userDetailsService(userDetailsService());
+
+//        自定义数据源（来自数据库中的查询结果）
         builder.userDetailsService(myUserDetailsService);
     }
 
@@ -42,7 +61,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated() //authenticated() 需要认证
                 .and()
                 .formLogin()
-                .loginPage("/login.htmll") //用来指定默认登录页面,不指定的话，当用户访问未认证资源的时候，依旧会跳转到默认Security的默认登陆页面
+                .loginPage("/login.htmll") //用来指定默认登录页面（意思就是访问受限资源的时候，如果还没登陆，就会跳转到这个页面下）,不指定的话，当用户访问未认证资源的时候，依旧会跳转到默认Security的默认登陆页面
                 .loginProcessingUrl("/doLogin")
                 /**
                  * ↑ 一旦指定默认登录页面 ,就必须写这个 ;这里的参数(即"/doLogin") 和 templates下的那个前端文件里的表单发送的路径必须一样
